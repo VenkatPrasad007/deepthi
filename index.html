@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Just For You ✨ | Mounika</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #ec4899;
+            --secondary: #8b5cf6;
+            --accent: #f43f5e;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: linear-gradient(135deg, #fff0f5 0%, #fbe8f3 25%, #ede9fe 60%, #fae8ff 100%);
+            background-size: 300% 300%;
+            animation: gradientBG 18s ease infinite;
+            min-height: 100vh;
+            overflow-x: hidden;
+            color: #1f2937;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .font-cursive { font-family: 'Dancing Script', cursive; }
+        .font-serif-italic { font-family: 'Playfair Display', serif; }
+
+        /* Glassmorphism */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.82);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 25px 50px -12px rgba(236, 72, 153, 0.18);
+        }
+
+        .glass-pill {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.85);
+        }
+
+        /* Page Transitions */
+        .page-slide {
+            display: none;
+            opacity: 0;
+            transform: translateY(18px) scale(0.98);
+            transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1), transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .page-slide.active {
+            display: flex;
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        /* Ambient floating elements */
+        .floating-element {
+            position: fixed;
+            pointer-events: none;
+            z-index: 0;
+            animation: driftDownward linear infinite;
+        }
+
+        @keyframes driftDownward {
+            0% { transform: translateY(-8vh) translateX(0) rotate(0deg) scale(0.7); opacity: 0; }
+            15% { opacity: 0.85; }
+            85% { opacity: 0.85; }
+            100% { transform: translateY(105vh) translateX(40px) rotate(360deg) scale(1.15); opacity: 0; }
+        }
+
+        /* Rotating Vinyl Icon */
+        @keyframes vinylSpin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .vinyl-spinning { animation: vinylSpin 3.5s linear infinite; }
+
+        /* Equalizer Wave Bars */
+        .equalizer-bar {
+            width: 3.5px;
+            background: linear-gradient(to top, #ec4899, #8b5cf6);
+            border-radius: 999px;
+            animation: waveBounce 0.9s ease-in-out infinite alternate;
+        }
+        .equalizer-bar:nth-child(2) { animation-delay: 0.2s; }
+        .equalizer-bar:nth-child(3) { animation-delay: 0.4s; }
+        .equalizer-bar:nth-child(4) { animation-delay: 0.15s; }
+        .equalizer-bar:nth-child(5) { animation-delay: 0.35s; }
+
+        @keyframes waveBounce {
+            0% { height: 6px; }
+            100% { height: 26px; }
+        }
+
+        /* Shake animation */
+        @keyframes shakeError {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
+        }
+        .shake { animation: shakeError 0.45s ease-in-out; }
+
+        /* Custom Range Slider */
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 30px;
+            width: 30px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ec4899, #8b5cf6);
+            cursor: pointer;
+            margin-top: -9px;
+            box-shadow: 0 4px 15px rgba(236, 72, 153, 0.55);
+            border: 3px solid white;
+        }
+
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 12px;
+            cursor: pointer;
+            background: linear-gradient(90deg, #fbcfe8, #ddd6fe, #f472b6);
+            border-radius: 999px;
+        }
+
+        .burst-particle {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            animation: burstFall linear forwards;
+        }
+
+        @keyframes burstFall {
+            0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 1; }
+            100% { transform: translateY(92vh) rotate(720deg) scale(0.4); opacity: 0; }
+        }
+    </style>
+</head>
+<body class="relative flex flex-col items-center justify-between min-h-screen p-3 sm:p-6">
+
+    <audio id="bg-music" loop preload="auto">
+        <source id="audio-source" src="Inthandham.mp3" type="audio/mpeg">
+    </audio>
+
+    <div id="ambient-container" class="fixed inset-0 pointer-events-none z-0 overflow-hidden"></div>
+
+    <header id="top-nav" class="hidden w-full max-w-md z-20 pt-1 pb-2 flex flex-col gap-2">
+        <div class="flex items-center justify-between px-1">
+            <button id="prev-btn" onclick="goPrevPage()" class="text-xs font-semibold text-pink-600 glass-pill px-3 py-1.5 rounded-full hover:bg-white/90 transition active:scale-95 flex items-center gap-1 opacity-0 pointer-events-none">
+                <span>←</span> back
+            </button>
+            <div id="name-badge" class="glass-pill px-4 py-1 rounded-full text-xs font-bold tracking-wider uppercase text-transparent bg-clip-text bg-gradient-to-r from-pink-600 via-rose-500 to-violet-600 shadow-sm">
+                ✨ Mounika Edition ✨
+            </div>
+            <span id="step-counter" class="text-xs font-bold text-gray-500 glass-pill px-3 py-1 rounded-full">
+                1 / 10
+            </span>
+        </div>
+        <div class="w-full bg-white/70 h-2 rounded-full overflow-hidden p-0.5 shadow-inner">
+            <div id="progress-fill" class="bg-gradient-to-r from-pink-500 via-rose-400 to-violet-500 h-full rounded-full transition-all duration-500" style="width: 10%;"></div>
+        </div>
+    </header>
+
+    <main class="w-full max-w-md my-auto z-10 flex flex-col items-center justify-center py-2">
+
+        <section id="page-1" class="page-slide active w-full flex-col">
+            <div class="glass-card rounded-3xl p-6 sm:p-8 w-full text-center relative overflow-hidden">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-pink-500 to-violet-500 flex items-center justify-center text-3xl mx-auto mb-3 shadow-lg shadow-pink-200">
+                    👑
+                </div>
+                <span class="text-[11px] font-bold uppercase tracking-widest text-pink-500 bg-pink-50 px-3 py-1 rounded-full border border-pink-100">
+                    Exclusive Space
+                </span>
+                <h1 class="text-4xl sm:text-5xl font-cursive text-gray-800 mt-3 mb-2">
+                    The Deepu Chronicles
+                </h1>
+                <p class="text-xs sm:text-sm text-gray-600 mb-6 leading-relaxed">
+                    A simple interactive page crafted for someone who brings effortless grace everywhere she goes. Enter your details below ✨
+                </p>
+
+                <div class="space-y-3.5 text-left" id="login-form-box">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1 ml-1">Your Name:</label>
+                        <input type="text" id="login-username" placeholder="Enter your name" autocomplete="off"
+                            class="w-full px-4 py-3 rounded-2xl bg-white/90 border border-pink-200 focus:border-pink-500 focus:ring-2 focus:ring-pink-200 outline-none text-sm font-medium transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1 ml-1">Passcode:</label>
+                        <input type="password" id="login-password" placeholder="Hint: starts with 'm'..." autocomplete="off"
+                            class="w-full px-4 py-3 rounded-2xl bg-white/90 border border-pink-200 focus:border-pink-500 focus:ring-2 focus:ring-pink-200 outline-none text-sm font-medium transition">
+                    </div>
+
+                    <div id="login-error" class="hidden text-xs font-semibold text-rose-600 bg-rose-50 border border-rose-200 rounded-xl p-2.5 text-center">
+                        Oops! Passcode error. Hint: type <span class="underline font-bold">mental</span> 😉
+                    </div>
+
+                    <button onclick="handleLogin()" class="w-full py-3.5 mt-2 rounded-2xl bg-gradient-to-r from-pink-500 via-rose-500 to-violet-500 text-white font-bold text-sm shadow-lg shadow-pink-300/50 hover:opacity-95 active:scale-[0.98] transition flex items-center justify-center gap-2">
+                        <span>Open The Magic</span> ✨
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section id="page-2" class="page-slide w-full flex-col">
+            <div class="glass-card rounded-3xl p-6 sm:p-7 w-full text-center">
+                <span class="text-xs font-bold text-pink-500 bg-pink-50 px-3 py-1 rounded-full">Stage 2 • Identity</span>
+                <h2 class="text-4xl font-cursive text-pink-600 mt-3 mb-2">Hey Mouni... 🪷</h2>
+                <p class="text-xs sm:text-sm text-gray-600 mb-5 leading-relaxed">
+                    Select your designation to customize your experience:
+                </p>
+
+                <div class="bg-white/80 border border-pink-100 rounded-2xl p-4 mb-4 text-left shadow-sm" id="gender-box">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">
+                        Select Category:
+                    </label>
+                    <div class="relative">
+                        <select id="category-select" onchange="handleCategoryChoice(this.value)"
+                            class="w-full appearance-none bg-white border-2 border-pink-300 text-gray-800 font-semibold text-sm rounded-xl px-4 py-3 pr-10 outline-none focus:border-pink-500 transition cursor-pointer shadow-sm">
+                            <option value="" disabled selected>-- Choose Option --</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Devatha">Devatha 🪷 (Recommended)</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-pink-500 font-bold">
+                            ▼
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-2 mt-3">
+                        <button onclick="pickCategory('Male')" class="py-2 px-1 text-center rounded-xl text-xs font-semibold bg-gray-100 text-gray-700 active:scale-95 transition">Male</button>
+                        <button onclick="pickCategory('Female')" class="py-2 px-1 text-center rounded-xl text-xs font-semibold bg-gray-100 text-gray-700 active:scale-95 transition">Female</button>
+                        <button onclick="pickCategory('Devatha')" class="py-2 px-1 text-center rounded-xl text-xs font-bold bg-pink-100 text-pink-700 border border-pink-300 active:scale-95 transition">Devatha 🪷</button>
+                    </div>
+                </div>
+
+                <div id="category-msg" class="hidden rounded-2xl p-3.5 mb-4 text-xs sm:text-sm font-semibold transition-all"></div>
+
+                <button id="btn-next-2" onclick="goToPage(3)" class="hidden w-full py-3.5 rounded-2xl bg-gradient-to-r from-pink-500 to-violet-500 text-white font-bold text-sm shadow-lg transition active:scale-95">
+                    Continue as Devatha →
+                </button>
+            </div>
+        </section>
+
+        <section id="page-3" class="page-slide w-full flex-col">
+            <div class="glass-card rounded-3xl p-6 sm:p-7 w-full text-center">
+                <span class="text-xs font-bold text-rose-500 bg-rose-50 px-3 py-1 rounded-full">Stage 3 • Melodies</span>
+                <h2 class="text-3xl sm:text-4xl font-cursive text-rose-500 mt-2 mb-1">Deepthi’s Musical Vibe</h2>
+                <p class="text-xs text-gray-500 mb-4">Tap any track card to play the song & feel the lyrics!</p>
+
+                <div class="bg-gradient-to-r from-pink-50 via-purple-50 to-pink-50 border border-pink-200 rounded-2xl p-3.5 mb-4 flex items-center justify-between text-left">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-pink-500 text-white flex items-center justify-center text-lg shadow-md shrink-0">
+                            🎶
+                        </div>
+                        <div>
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-pink-600 block">Now Playing</span>
+                            <span id="now-playing-title" class="text-xs sm:text-sm font-bold text-gray-800">Track 01 — Inthandam Vibe</span>
+                        </div>
+                    </div>
+                    <div id="jukebox-eq" class="flex items-end gap-1 h-6">
+                        <div class="equalizer-bar"></div>
+                        <div class="equalizer-bar"></div>
+                        <div class="equalizer-bar"></div>
+                        <div class="equalizer-bar"></div>
+                        <div class="equalizer-bar"></div>
+                    </div>
+                </div>
+
+                <div class="space-y-3 mb-4 text-left">
+                    <div onclick="playJukeboxTrack(0)" id="juke-card-0" class="p-3.5 rounded-2xl bg-white border-2 border-pink-400 shadow-sm cursor-pointer active:scale-[0.99] transition">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="text-xs font-bold text-pink-600">Track 01 • "Inthandam Dhari Mallindha"</span>
+                            <span class="text-[11px] font-bold text-pink-500" id="badge-track-0">🔊 Playing</span>
+                        </div>
+                        <p class="font-serif-italic italic text-xs text-pink-700 mb-1">"Inthandam dhari mallindha... bhoomipai cherukundha..."</p>
+                        <p class="text-[11px] text-gray-500">Feels like these lines were composed right after seeing Mouni in a traditional look. 🌸</p>
+                    </div>
+
+                    <div onclick="playJukeboxTrack(1)" id="juke-card-1" class="p-3.5 rounded-2xl bg-white/70 border border-purple-100 hover:border-purple-300 shadow-sm cursor-pointer active:scale-[0.99] transition">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="text-xs font-bold text-purple-600">Track 02 • "Nee Kalalani Chusi"</span>
+                            <span class="text-[11px] font-bold text-gray-400" id="badge-track-1">▶ Tap to Play</span>
+                        </div>
+                        <p class="font-serif-italic italic text-xs text-purple-700 mb-1">"Nee kalalani chusi aagaleka... nee navvulo padesave..."</p>
+                        <p class="text-[11px] text-gray-500">Certain smiles just instantly calm everything down... exactly what Deepu's smile does. 💫</p>
+                    </div>
+
+                    <div onclick="playJukeboxTrack(2)" id="juke-card-2" class="p-3.5 rounded-2xl bg-white/70 border border-rose-100 hover:border-rose-300 shadow-sm cursor-pointer active:scale-[0.99] transition">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="text-xs font-bold text-rose-600">Track 03 • "Kallu Moosi Tericheloga"</span>
+                            <span class="text-[11px] font-bold text-gray-400" id="badge-track-2">▶ Tap to Play</span>
+                        </div>
+                        <p class="font-serif-italic italic text-xs text-rose-700 mb-1">"Kallu moosi tericheloga... gundelona cherave..."</p>
+                        <p class="text-[11px] text-gray-500">No matter how chaotic a day gets, a pleasant presence changes the entire mood. 🌷</p>
+                    </div>
+                </div>
+
+                <button onclick="goToPage(4)" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-pink-500 to-violet-500 text-white font-bold text-sm shadow-lg transition active:scale-95">
+                    Check the Aura Meter →
+                </button>
+            </div>
+        </section>
+
+        <section id="page-4" class="page-slide w-full flex-col">
+            <div class="glass-card rounded-3xl p-6 sm:p-7 w-full text-center">
+                <span class="text-xs font-bold text-pink-600 bg-pink-50 px-3 py-1 rounded-full">Stage 4 • Interactive Reading</span>
+                <h2 class="text-4xl font-cursive text-pink-600 mt-2 mb-1">Deepu’s Charm Meter</h2>
+                <p class="text-xs text-gray-500 mb-5">Try sliding this down if you can... 👀</p>
+
+                <div class="bg-white/80 rounded-2xl p-5 border border-pink-100 shadow-sm mb-4">
+                    <div class="text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-1">Aura Level</div>
+                    <div id="aura-text" class="text-2xl sm:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-pink-600 to-violet-600 mb-3 transition-all">
+                        80% — Natural Elegance 🌸
+                    </div>
+
+                    <input type="range" id="aura-slider" min="1" max="100" value="80" oninput="testAuraSlider(this.value)">
+                    
+                    <div class="flex justify-between text-[11px] font-semibold text-gray-400 mt-2">
+                        <span>1% (Low)</span>
+                        <span>50% (Normal)</span>
+                        <span>100% (High)</span>
+                    </div>
+                </div>
+
+                <div id="aura-surge-box" class="hidden bg-rose-50 border border-rose-200 rounded-2xl p-4 mb-4 text-center">
+                    <div class="text-sm sm:text-base font-extrabold text-rose-600 mb-1">
+                        💥 1000% — OVERFLOW DETECTED!
+                    </div>
+                    <p class="text-xs text-gray-700 leading-relaxed">
+                        The meter refuses to stay low! True grace and a genuine smile can't be limited by numbers. ✨
+                    </p>
+                </div>
+
+                <button id="btn-next-4" onclick="goToPage(5)" class="hidden w-full py-3.5 rounded-2xl bg-gradient-to-r from-pink-500 to-violet-500 text-white font-bold text-sm shadow-lg transition active:scale-95">
+                    See The Instagram Feed →
+                </button>
+            </div>
+        </section>
+
+        <section id="page-5" class="page-slide w-full flex-col">
+            <div class="glass-card rounded-3xl p-5 sm:p-6 w-full text-center">
+                <div class="flex items-center justify-between mb-3 px-1">
+                    <div class="flex items-center gap-2">
+                        <span class="text-lg">📸</span>
+                        <span class="text-xs font-extrabold tracking-wider text-gray-700 uppercase">Insta Feature</span>
+                    </div>
+                    <span class="text-[11px] font-bold text-pink-600 bg-pink-100 px-2.5 py-0.5 rounded-full">Viral Post 🔥</span>
+                </div>
+
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-md overflow-hidden text-left mb-4">
+                    <div class="flex items-center justify-between p-3 border-b border-gray-100">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-pink-500 to-violet-500 p-0.5">
+                                <div class="w-full h-full bg-white rounded-full flex items-center justify-center text-xs">✨</div>
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-bold text-gray-900 leading-tight">mounika_official</h4>
+                                <span class="text-[10px] text-gray-400">Hyderabad • Radiant Vibe</span>
+                            </div>
+                        </div>
+                        <span class="text-gray-400 text-sm">•••</span>
+                    </div>
+
+                    <div class="relative bg-gray-100 w-full aspect-square overflow-hidden">
+                        <img id="insta-img" src="pic1.jpeg" 
+                            onerror="this.src='https://placehold.co/600x600/fce7f3/831843?text=Deepu+Aura+%E2%9C%A8+(YOUR_IMAGE_1.jpg)'"
+                            alt="Mounika" class="w-full h-full object-cover object-center">
+                    </div>
+
+                    <div class="p-3 pb-2 flex items-center justify-between text-lg">
+                        <div class="flex items-center gap-3">
+                            <span class="cursor-pointer active:scale-125 transition text-rose-500" onclick="burstHearts()">❤️</span>
+                            <span>💬</span>
+                            <span>🚀</span>
+                        </div>
+                        <span class="text-xs font-bold text-gray-400">10,842 Likes</span>
+                    </div>
+
+                    <div class="px-3 pb-3 space-y-2 text-xs border-t border-gray-50 pt-2">
+                        <div>
+                            <span class="font-bold text-gray-900">urstrulymahesh</span>
+                            <span class="inline-block bg-blue-500 text-white rounded-full text-[9px] px-1">✓</span>
+                            <span class="text-gray-700 ml-1">Pure screen presence! Effortless elegance anthe. ✨</span>
+                        </div>
+                        <div>
+                            <span class="font-bold text-gray-900">samantharuthprabhuoffl</span>
+                            <span class="inline-block bg-blue-500 text-white rounded-full text-[9px] px-1">✓</span>
+                            <span class="text-gray-700 ml-1">Such a graceful aura darling, keep glowing! ❤️</span>
+                        </div>
+                        <div>
+                            <span class="font-bold text-gray-900">alluarjunonline</span>
+                            <span class="inline-block bg-blue-500 text-white rounded-full text-[9px] px-1">✓</span>
+                            <span class="text-gray-700 ml-1">Genuinely impressive style and confidence! 🔥👌</span>
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="goToPage(6)" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-pink-500 to-violet-500 text-white font-bold text-sm shadow-lg transition active:scale-95">
+                    Appreciating The Work Ethic →
+                </button>
+            </div>
+        </section>
+
+        <section id="page-6" class="page-slide w-full flex-col">
+            <div class="glass-card rounded-3xl p-6 sm:p-7 w-full text-center">
+                <span class="text-xs font-bold text-amber-600 bg-amber-50 px-3 py-1 rounded-full">Stage 6 • Unspoken Strength</span>
+                <h2 class="text-3xl sm:text-4xl font-cursive text-pink-600 mt-2 mb-2">Grace Under Pressure</h2>
+
+                <div class="relative mx-auto w-32 h-32 rounded-full p-1.5 bg-gradient-to-tr from-pink-400 via-rose-300 to-violet-400 shadow-md mb-4">
+                    <img src="pic3.jpeg" 
+                        onerror="this.src='https://placehold.co/400x400/ede9fe/6d28d9?text=Independent+Mouni+(YOUR_IMAGE_2.jpg)'"
+                        alt="Workplace Grace" class="w-full h-full object-cover rounded-full border-2 border-white">
+                    <span class="absolute bottom-0 right-1 bg-white text-base rounded-full w-7 h-7 flex items-center justify-center shadow">💼</span>
+                </div>
+
+                <div class="bg-white/80 rounded-2xl p-4 border border-pink-100 text-left space-y-2.5 mb-4 shadow-sm">
+                    <p class="text-xs sm:text-sm text-gray-700 leading-relaxed">
+                        Beyond all compliments, <span class="font-bold text-pink-600">Mouni</span>, what is truly remarkable is how you navigate your career and daily responsibilities.
+                    </p>
+                    <p class="text-xs sm:text-sm text-gray-700 leading-relaxed">
+                        Handling work stress, deadlines, and independent life while keeping a calm, smiling composure isn't easy. 
+                    </p>
+                    <p class="text-xs sm:text-sm text-gray-700 leading-relaxed">
+                        You carry yourself with genuine resilience and poise. Keep growing at your own pace! 🌸✨
+                    </p>
+                </div>
+
+                <button onclick="boostCoffee()" class="w-full py-3 rounded-2xl bg-amber-50 hover:bg-amber-100 border border-amber-300 text-amber-900 font-bold text-xs sm:text-sm transition active:scale-95 flex items-center justify-center gap-2 mb-3 shadow-sm">
+                    <span>☕ Send Positive Energy Boost</span>
+                    <span id="coffee-badge" class="bg-amber-500 text-white px-2 py-0.5 rounded-full text-xs">0</span>
+                </button>
+                <p id="coffee-cheer" class="text-[11px] font-semibold text-pink-600 h-4 mb-2"></p>
+
+                <button onclick="goToPage(7)" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-pink-500 to-violet-500 text-white font-bold text-sm shadow-lg transition active:scale-95">
+                    The Presence Factor →
+                </button>
+            </div>
+        </section>
+
+        <section id="page-7" class="page-slide w-full flex-col">
+            <div class="glass-card rounded-3xl p-6 sm:p-7 w-full text-center">
+                <span class="text-xs font-bold text-violet-600 bg-violet-50 px-3 py-1 rounded-full">Stage 7 • The Aura</span>
+                <h2 class="text-3xl sm:text-4xl font-cursive text-violet-600 mt-2 mb-1">The Presence Factor</h2>
+                <p class="text-xs text-gray-500 mb-4">Some people bring an instant positive energy into every conversation...</p>
+
+                <div class="bg-white/80 border border-pink-200 rounded-2xl p-4 text-left space-y-3 mb-4 shadow-sm">
+                    <div class="flex items-center gap-2">
+                        <span class="text-lg">✨</span>
+                        <h4 class="text-xs font-bold text-pink-600 uppercase tracking-wider">Effortless Warmth</h4>
+                    </div>
+                    <p class="text-xs sm:text-sm text-gray-700 leading-relaxed">
+                        It’s not just about looking good—it’s about how comfortable and welcoming you make everyone feel around you.
+                    </p>
+                    <p class="text-xs sm:text-sm text-gray-700 leading-relaxed italic">
+                        "Oka chinna navvutho situational tension ni melt cheseyadam Mouni special quality." 💫
+                    </p>
+                </div>
+
+                <button onclick="goToPage(8)" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-pink-500 to-violet-500 text-white font-bold text-sm shadow-lg transition active:scale-95">
+                    Unveil Secret Note →
+                </button>
+            </div>
+        </section>
+
+        <section id="page-8" class="page-slide w-full flex-col">
+            <div class="glass-card rounded-3xl p-6 sm:p-7 w-full text-center">
+                <span class="text-xs font-bold text-rose-500 bg-rose-50 px-3 py-1 rounded-full">Stage 8 • Words of Respect</span>
+                <h2 class="text-4xl font-cursive text-rose-500 mt-2 mb-1">A Quiet Reflection</h2>
+                <p class="text-xs text-gray-500 mb-4">Tap on the letter envelope to open 💌</p>
+
+                <div id="letter-box" onclick="unveilSecretLetter()" class="p-6 rounded-3xl bg-gradient-to-br from-pink-100 via-rose-50 to-purple-100 border-2 border-pink-300 shadow-md cursor-pointer transition transform hover:scale-[1.01] active:scale-[0.99] mb-4 text-left relative overflow-hidden">
+                    <div id="letter-locked" class="text-center py-6">
+                        <span class="text-5xl block mb-2 animate-bounce">💌</span>
+                        <span class="text-xs font-bold uppercase tracking-widest text-pink-600 bg-white/70 px-4 py-1.5 rounded-full border border-pink-200">
+                            Tap to Open Note
+                        </span>
+                    </div>
+
+                    <div id="letter-unveiled" class="hidden space-y-3">
+                        <div class="flex items-center justify-between border-b border-pink-200 pb-2">
+                            <span class="font-cursive text-xl text-pink-600">Dear Deepu ✨</span>
+                            <span class="text-[10px] text-gray-400">Thoughtful Note</span>
+                        </div>
+                        <p class="text-xs sm:text-sm text-gray-800 leading-relaxed font-serif-italic">
+                            "Real charm comes from genuine kindness, self-respect, and a peaceful heart. That is what makes your presence so distinct."
+                        </p>
+                        <p class="text-xs sm:text-sm text-gray-700 leading-relaxed italic">
+                            Never forget how special your aura is. Keep shining brightly with that serene smile! 🌸
+                        </p>
+                    </div>
+                </div>
+
+                <button id="btn-next-8" onclick="goToPage(9)" class="hidden w-full py-3.5 rounded-2xl bg-gradient-to-r from-pink-500 to-violet-500 text-white font-bold text-sm shadow-lg transition active:scale-95">
+                    A Playful Question →
+                </button>
+            </div>
+        </section>
+
+        <section id="page-9" class="page-slide w-full flex-col">
+            <div class="glass-card rounded-3xl p-6 sm:p-7 w-full text-center">
+                <span class="text-xs font-bold text-pink-600 bg-pink-50 px-3 py-1 rounded-full">Stage 9 • Honest Question</span>
+                <h2 class="text-3xl sm:text-4xl font-cursive text-pink-600 mt-2 mb-2">Be Honest, Deepthi... 😌</h2>
+                <p class="text-xs sm:text-sm text-gray-700 font-medium mb-3 leading-relaxed">
+                    Is Mouni one of the sweetest and most charming people you know?
+                </p>
+
+                <div id="dodge-status" class="text-xs font-bold text-violet-600 bg-violet-50 border border-violet-200 rounded-xl py-2 px-3 mb-3 min-h-[34px] flex items-center justify-center">
+                    Select your answer below 👇
+                </div>
+
+                <div id="dodge-arena" class="relative w-full h-44 bg-white/70 rounded-2xl border border-pink-200 p-4 flex flex-col items-center justify-center gap-3 overflow-hidden">
+                    <button onclick="acceptCharm()" class="z-10 py-3 px-6 rounded-full bg-gradient-to-r from-pink-500 to-rose-500 text-white font-bold text-xs sm:text-sm shadow-lg shadow-pink-200 hover:scale-105 active:scale-95 transition">
+                        Yes, Absolutely 100%! 😌✨
+                    </button>
+
+                    <button id="runaway-btn" 
+                        onmouseover="evadeNoButton(event)" 
+                        ontouchstart="evadeNoButton(event)" 
+                        onclick="evadeNoButton(event)"
+                        class="py-2 px-5 rounded-full bg-gray-200 text-gray-700 font-semibold text-xs shadow transition-all duration-200">
+                        No, just normal 🙄
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section id="page-10" class="page-slide w-full flex-col">
+            <div class="glass-card rounded-3xl p-6 sm:p-7 w-full text-center relative overflow-hidden">
+                <div class="inline-block bg-gradient-to-r from-amber-200 via-pink-200 to-purple-200 text-purple-950 text-[11px] font-extrabold uppercase tracking-widest px-4 py-1 rounded-full shadow-sm mb-2">
+                    ✨ Always Outstanding ✨
+                </div>
+
+                <h2 class="text-3xl sm:text-4xl font-cursive text-pink-600 mb-1">
+                    Keep Smiling Always, Deepu!
+                </h2>
+                <p class="text-xs text-gray-500 mb-4">
+                    For <span class="font-bold text-gray-700">Mounika Deepthi</span>
+                </p>
+
+                <div class="relative w-40 h-40 mx-auto mb-4 rounded-2xl overflow-hidden shadow-lg border-4 border-white rotate-1">
+                    <img src="pic5.jpeg" 
+                        onerror="this.src='https://placehold.co/500x500/fbcfe8/831843?text=Favorite+Smile+(YOUR_IMAGE_3.jpg)'"
+                        alt="Tribute" class="w-full h-full object-cover">
+                </div>
+
+                <div class="bg-white/80 rounded-2xl p-4 border border-pink-100 mb-4 text-left space-y-2">
+                    <p class="text-xs sm:text-sm text-gray-700 leading-relaxed">
+                        May your days be filled with happiness, success, good health, and peace of mind.
+                    </p>
+                    <p class="text-xs sm:text-sm text-gray-600 leading-relaxed italic">
+                        May your coffee stay strong, work stress remain low, and that bright smile stay permanent! 💖
+                    </p>
+                </div>
+
+                <div class="bg-white/90 rounded-2xl p-3.5 border border-pink-200 text-left mb-4 shadow-sm">
+                    <label class="block text-xs font-bold text-gray-600 mb-1.5">
+                        💌 Leave a quick response or wish:
+                    </label>
+                    <div class="flex gap-2">
+                        <input type="text" id="final-reaction-input" placeholder="Type a smile or thought..." 
+                            class="flex-1 px-3 py-2 rounded-xl bg-white border border-pink-200 text-xs outline-none focus:border-pink-500">
+                        <button onclick="submitCheerNote()" id="send-reaction-btn" class="bg-pink-500 hover:bg-pink-600 text-white font-bold text-xs px-4 py-2 rounded-xl shadow transition active:scale-95">
+                            Send ✨
+                        </button>
+                    </div>
+                    <p id="note-success-badge" class="hidden text-[11px] font-bold text-emerald-600 mt-2">
+                        ✓ Message received! Have a wonderful day ahead 🌸
+                    </p>
+                </div>
+
+                <div class="flex gap-2">
+                    <button onclick="burstCelebration('🌸')" class="flex-1 py-3 rounded-2xl bg-gradient-to-r from-pink-500 to-violet-500 text-white font-bold text-xs sm:text-sm shadow-lg active:scale-95 transition">
+                        🎉 Shower Blossoms
+                    </button>
+                    <button onclick="goToPage(1)" class="py-3 px-4 rounded-2xl bg-white/80 text-gray-700 font-bold text-xs border border-pink-200 active:scale-95 transition">
+                        ↻ Replay
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <button id="floating-audio-btn" onclick="toggleMainMusic()" aria-label="Toggle Music"
+        class="hidden fixed bottom-4 right-4 z-50 glass-card w-12 h-12 rounded-full flex items-center justify-center shadow-xl border-2 border-pink-300 active:scale-90 transition">
+        <span id="audio-icon" class="text-xl">🎵</span>
+    </button>
+
+    <script>
+        // SCRIPT URL FOR SILENT TRACKING
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwaMZ629iDdG0iU9HLLyZ1kY_bKLaTWW5Efwzf44s9qzpcWAZisyL16sRGcJeMZezR_/exec';
+        let currentUserName = 'Anonymous';
+        let activePage = 1;
+        let isAudioPlaying = false;
+
+        function recordAction(actionName, extraInfo) {
+            if (!SCRIPT_URL || SCRIPT_URL === 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE') return;
+            try {
+                fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username: currentUserName,
+                        action: actionName,
+                        details: extraInfo,
+                        timestamp: new Date().toISOString()
+                    })
+                }).catch(function() {});
+            } catch(e) {}
+        }
+
+        function spawnAmbientParticles() {
+            const container = document.getElementById('ambient-container');
+            const items = ['🌸', '✨', '🤍', '🌷', '💫', '🪷', '⭐'];
+            for (let i = 0; i < 20; i++) {
+                const el = document.createElement('span');
+                el.className = 'floating-element';
+                el.textContent = items[i % items.length];
+                el.style.left = (Math.random() * 95) + 'vw';
+                el.style.fontSize = (Math.random() * 0.7 + 0.8) + 'rem';
+                el.style.animationDuration = (Math.random() * 8 + 10) + 's';
+                el.style.animationDelay = (Math.random() * 10) + 's';
+                container.appendChild(el);
+            }
+        }
+        spawnAmbientParticles();
+
+        function handleLogin() {
+            const nameField = document.getElementById('login-username');
+            const passField = document.getElementById('login-password');
+            const errorBanner = document.getElementById('login-error');
+            const formContainer = document.getElementById('login-form-box');
+
+            const name = nameField.value.trim();
+            const pass = passField.value.trim().toLowerCase();
+
+            if (!name) {
+                errorBanner.textContent = "Please enter your name first! 🌸";
+                errorBanner.classList.remove('hidden');
+                formContainer.classList.remove('shake');
+                void formContainer.offsetWidth;
+                formContainer.classList.add('shake');
+                return;
+            }
+
+            currentUserName = name;
+
+            if (pass === 'mental') {
+                errorBanner.classList.add('hidden');
+                recordAction('Login Success', 'User logged in');
+                document.getElementById('top-nav').classList.remove('hidden');
+                document.getElementById('floating-audio-btn').classList.remove('hidden');
+                startAudioPlayback();
+                goToPage(2);
+            } else {
+                errorBanner.innerHTML = "Oops! Passcode thappu padindi. Hint: try typing <span class='underline font-bold'>mental</span> 😉";
+                errorBanner.classList.remove('hidden');
+                formContainer.classList.remove('shake');
+                void formContainer.offsetWidth;
+                formContainer.classList.add('shake');
+                recordAction('Login Failed', 'Attempted pass: ' + passField.value);
+            }
+        }
+
+        document.getElementById('login-password').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') handleLogin();
+        });
+
+        function startAudioPlayback() {
+            const audio = document.getElementById('bg-music');
+            const btn = document.getElementById('floating-audio-btn');
+            const icon = document.getElementById('audio-icon');
+            audio.volume = 0.65;
+            audio.play().then(function() {
+                isAudioPlaying = true;
+                btn.classList.add('vinyl-spinning');
+                icon.textContent = '💿';
+            }).catch(function() {
+                isAudioPlaying = false;
+                icon.textContent = '🔇';
+            });
+        }
+
+        function toggleMainMusic() {
+            const audio = document.getElementById('bg-music');
+            const btn = document.getElementById('floating-audio-btn');
+            const icon = document.getElementById('audio-icon');
+
+            if (isAudioPlaying) {
+                audio.pause();
+                isAudioPlaying = false;
+                btn.classList.remove('vinyl-spinning');
+                icon.textContent = '🔇';
+                recordAction('Audio Controller', 'Paused music');
+            } else {
+                audio.play().catch(function() {});
+                isAudioPlaying = true;
+                btn.classList.add('vinyl-spinning');
+                icon.textContent = '💿';
+                recordAction('Audio Controller', 'Resumed music');
+            }
+        }
+
+        const stageBadges = {
+            1: '✨ Welcome Deepu ✨',
+            2: '🪷 Devatha Category 🪷',
+            3: '🎶 Deepthi’s Melodies 🎶',
+            4: '💖 Charm Meter 💖',
+            5: '📸 Celebrity Insta Feed 📸',
+            6: '💼 Resilience & Work Ethic 💼',
+            7: '🌸 The Presence Factor 🌸',
+            8: '💌 Note of Respect 💌',
+            9: '😌 Honest Question 😌',
+            10: '🏆 Celebration 🏆'
+        };
+
+        function goToPage(targetNum) {
+            const slides = document.querySelectorAll('.page-slide');
+            slides.forEach(function(s) { s.classList.remove('active'); });
+
+            const target = document.getElementById('page-' + targetNum);
+            if (target) target.classList.add('active');
+
+            activePage = targetNum;
+
+            if (targetNum >= 1 && targetNum <= 10) {
+                document.getElementById('step-counter').textContent = targetNum + ' / 10';
+                document.getElementById('progress-fill').style.width = (targetNum * 10) + '%';
+                document.getElementById('name-badge').textContent = stageBadges[targetNum] || '✨ Special Edition ✨';
+
+                const prevBtn = document.getElementById('prev-btn');
+                if (targetNum > 1) {
+                    prevBtn.classList.remove('opacity-0', 'pointer-events-none');
+                } else {
+                    prevBtn.classList.add('opacity-0', 'pointer-events-none');
+                }
+            }
+
+            if (targetNum === 10) {
+                burstCelebration('✨');
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            recordAction('Stage Navigation', 'Moved to stage ' + targetNum);
+        }
+
+        function goPrevPage() {
+            if (activePage > 1) goToPage(activePage - 1);
+        }
+
+        function pickCategory(val) {
+            const selectEl = document.getElementById('category-select');
+            selectEl.value = val;
+            handleCategoryChoice(val);
+        }
+
+        function handleCategoryChoice(val) {
+            const selectEl = document.getElementById('category-select');
+            const msgEl = document.getElementById('category-msg');
+            const box = document.getElementById('gender-box');
+            const nextBtn = document.getElementById('btn-next-2');
+
+            msgEl.classList.remove('hidden');
+
+            if (val === 'Male' || val === 'Female') {
+                box.classList.remove('shake');
+                void box.offsetWidth;
+                box.classList.add('shake');
+
+                msgEl.className = 'rounded-2xl p-3.5 mb-4 text-xs sm:text-sm font-semibold bg-amber-50 border border-amber-300 text-amber-900';
+                msgEl.innerHTML = '⚠️ <b>System Alert:</b> Standard categories don’t suit Deepu! Auto-locking as <b>Devatha 🪷</b>...';
+                recordAction('Stage 2 Category', 'Selected ' + val + ' -> Auto corrected to Devatha');
+
+                setTimeout(function() {
+                    selectEl.value = 'Devatha';
+                    msgEl.className = 'rounded-2xl p-3.5 mb-4 text-xs sm:text-sm font-semibold bg-emerald-50 border border-emerald-300 text-emerald-900';
+                    msgEl.innerHTML = '✅ <b>Perfect Match:</b> Category locked as <b>Devatha 🪷</b>.';
+                    nextBtn.classList.remove('hidden');
+                    burstCelebration('🪷');
+                }, 1000);
+            } else if (val === 'Devatha') {
+                msgEl.className = 'rounded-2xl p-3.5 mb-4 text-xs sm:text-sm font-semibold bg-emerald-50 border border-emerald-300 text-emerald-900';
+                msgEl.innerHTML = '✅ <b>Verified:</b> Category locked as <b>Devatha 🪷</b>.';
+                nextBtn.classList.remove('hidden');
+                burstCelebration('✨');
+                recordAction('Stage 2 Category', 'Selected Devatha directly');
+            }
+        }
+
+        const jukeboxTracks = [
+            { title: 'Track 01 — Inthandam Vibe', src: 'Inthandham.mp3' },
+            { title: 'Track 02 — Melody Vibe', src: 'Samajavaragamana.mp3' },
+            { title: 'Track 03 — Peaceful Rhythm', src: 'Kallumoosi.mp3' }
+        ];
+
+        function playJukeboxTrack(idx) {
+            const track = jukeboxTracks[idx];
+            const audio = document.getElementById('bg-music');
+            const source = document.getElementById('audio-source');
+            const titleEl = document.getElementById('now-playing-title');
+            const btn = document.getElementById('floating-audio-btn');
+            const icon = document.getElementById('audio-icon');
+
+            titleEl.textContent = track.title;
+
+            for (let i = 0; i < 3; i++) {
+                const card = document.getElementById('juke-card-' + i);
+                const badge = document.getElementById('badge-track-' + i);
+                if (i === idx) {
+                    card.className = 'p-3.5 rounded-2xl bg-white border-2 border-pink-400 shadow-md cursor-pointer active:scale-[0.99] transition';
+                    badge.textContent = '🔊 Playing';
+                    badge.className = 'text-[11px] font-bold text-pink-600';
+                } else {
+                    card.className = 'p-3.5 rounded-2xl bg-white/70 border border-gray-200 shadow-sm cursor-pointer active:scale-[0.99] transition';
+                    badge.textContent = '▶ Tap to Play';
+                    badge.className = 'text-[11px] font-bold text-gray-400';
+                }
+            }
+
+            try {
+                audio.pause();
+                source.src = track.src;
+                audio.load();
+                audio.play().then(function() {
+                    isAudioPlaying = true;
+                    btn.classList.add('vinyl-spinning');
+                    icon.textContent = '💿';
+                }).catch(function() {});
+            } catch(e) {}
+
+            burstCelebration('🎶');
+            recordAction('Jukebox Track Switched', track.title);
+        }
+
+        let auraOverloaded = false;
+        function testAuraSlider(val) {
+            if (auraOverloaded) return;
+            const slider = document.getElementById('aura-slider');
+            const text = document.getElementById('aura-text');
+            const banner = document.getElementById('aura-surge-box');
+            const nextBtn = document.getElementById('btn-next-4');
+
+            auraOverloaded = true;
+            setTimeout(function() {
+                slider.value = 100;
+                text.textContent = '1000% — Limitless Charm! 😍';
+                banner.classList.remove('hidden');
+                nextBtn.classList.remove('hidden');
+                burstCelebration('💖');
+                recordAction('Stage 4 Aura Meter', 'Sprung to 1000%');
+            }, 700);
+        }
+
+        function burstHearts() {
+            burstCelebration('❤️');
+            recordAction('Stage 5 Insta Like', 'Tapped heart button');
+        }
+
+        let coffeeCounter = 0;
+        const coffeeCheers = [
+            "1st Cup! Smooth workdays & calm focus ☕✨",
+            "Double Boost! Managing deadlines effortlessly 🌸",
+            "Maximum Energy! Keep going, Mouni 💖"
+        ];
+
+        function boostCoffee() {
+            coffeeCounter++;
+            document.getElementById('coffee-badge').textContent = coffeeCounter;
+            const cheerEl = document.getElementById('coffee-cheer');
+            cheerEl.textContent = coffeeCheers[(coffeeCounter - 1) % coffeeCheers.length];
+            burstCelebration('☕');
+            recordAction('Stage 6 Coffee Boost', 'Count: ' + coffeeCounter);
+        }
+
+        let letterOpened = false;
+        function unveilSecretLetter() {
+            if (letterOpened) return;
+            letterOpened = true;
+            document.getElementById('letter-locked').classList.add('hidden');
+            document.getElementById('letter-unveiled').classList.remove('hidden');
+            document.getElementById('btn-next-8').classList.remove('hidden');
+            burstCelebration('💌');
+            recordAction('Stage 8 Letter', 'Opened note');
+        }
+
+        let dodgeCount = 0;
+        const dodgeComments = [
+            "Haha, nice try! Button ran away 😜",
+            "Even the screen knows the right choice! ✨",
+            "Try clicking 'Yes' instead! 😂"
+        ];
+
+        function evadeNoButton(e) {
+            if (e) e.preventDefault();
+            const btn = document.getElementById('runaway-btn');
+            const arena = document.getElementById('dodge-arena');
+            const status = document.getElementById('dodge-status');
+
+            const maxX = Math.max(15, arena.clientWidth - btn.offsetWidth - 16);
+            const maxY = Math.max(15, arena.clientHeight - btn.offsetHeight - 16);
+
+            const randomX = Math.floor(Math.random() * maxX);
+            const randomY = Math.floor(Math.random() * maxY);
+
+            btn.style.position = 'absolute';
+            btn.style.left = randomX + 'px';
+            btn.style.top = randomY + 'px';
+
+            status.textContent = dodgeComments[dodgeCount % dodgeComments.length];
+            dodgeCount++;
+            recordAction('Stage 9 Dodge', 'Attempt: ' + dodgeCount);
+        }
+
+        function acceptCharm() {
+            burstCelebration('😌');
+            recordAction('Stage 9 Confession', 'Accepted option');
+            goToPage(10);
+        }
+
+        function submitCheerNote() {
+            const input = document.getElementById('final-reaction-input');
+            const note = input.value.trim();
+            if (!note) return;
+
+            recordAction('Stage 10 Reaction Note', note);
+            input.value = '';
+            document.getElementById('note-success-badge').classList.remove('hidden');
+            document.getElementById('send-reaction-btn').textContent = 'Sent 💖';
+            burstCelebration('✨');
+        }
+
+        function burstCelebration(primarySymbol) {
+            const symbols = [primarySymbol, '🌸', '✨', '💖', '⭐'];
+            for (let i = 0; i < 18; i++) {
+                const p = document.createElement('div');
+                p.className = 'burst-particle';
+                p.textContent = symbols[i % symbols.length];
+                p.style.left = (Math.random() * 92 + 4) + 'vw';
+                p.style.top = '-20px';
+                p.style.fontSize = (Math.random() * 0.8 + 1) + 'rem';
+                const dur = Math.random() * 1.5 + 1.2;
+                p.style.animationDuration = dur + 's';
+                document.body.appendChild(p);
+                setTimeout(function() { p.remove(); }, dur * 1000);
+            }
+        }
+    </script>
+</body>
+</html>
